@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=1440" />
+<title>Fan Comparison — PS1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #F4F5F8;
+    --surface: #FFFFFF;
+    --surface-2: #FAFBFC;
+    --surface-3: #F1F3F7;
+    --border: #E6E8EE;
+    --border-strong: #D5D8E0;
+    --text: #0F172A;
+    --text-2: #475569;
+    --muted: #94A3B8;
+    --ac: #E07A3C;
+    --ac-soft: rgba(224, 122, 60, 0.12);
+    --ac-bg:   rgba(224, 122, 60, 0.08);
+    --ec: #16A085;
+    --ec-soft: rgba(22, 160, 133, 0.12);
+    --ec-bg:   rgba(22, 160, 133, 0.07);
+    --mixed: #7C5BDF;
+    --mixed-soft: rgba(124, 91, 223, 0.14);
+    --mixed-bg:   rgba(124, 91, 223, 0.07);
+    --save: #2563EB;
+    --save-soft: rgba(37, 99, 235, 0.10);
+    --grid: #EEF0F4;
+    --good: #16A085;
+    --warn: #DC2626;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Sans Thai', 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-size: 14px;
+  }
+  .container {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 32px 40px 64px;
+  }
+
+  /* ── Header ──────────────────────────────────────────── */
+  .header {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    margin-bottom: 28px; gap: 24px; flex-wrap: wrap;
+  }
+  .title-block .eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--text-2); font-weight: 500; margin-bottom: 10px;
+    font-family: 'IBM Plex Sans', sans-serif;
+  }
+  .eyebrow::before {
+    content: ''; width: 16px; height: 2px; background: var(--mixed); border-radius: 2px;
+  }
+  .title-block h1 {
+    font-family: 'IBM Plex Sans Thai', sans-serif;
+    font-size: 28px; font-weight: 600; letter-spacing: -0.01em;
+    margin: 0 0 6px; line-height: 1.2;
+  }
+  .title-block .sub {
+    color: var(--text-2); font-size: 13.5px; line-height: 1.5;
+  }
+  .meta { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 8px 14px; border-radius: 999px;
+    background: var(--surface); border: 1px solid var(--border);
+    font-size: 13px; color: var(--text-2);
+  }
+  .pill .dot {
+    width: 6px; height: 6px; border-radius: 50%; background: var(--good);
+    box-shadow: 0 0 0 3px rgba(22,160,133,0.18);
+  }
+  .pill strong { color: var(--text); font-weight: 600; font-family: 'IBM Plex Mono', monospace; }
+  .btn {
+    border: 0; padding: 9px 16px; border-radius: 8px;
+    font: inherit; font-size: 13px; cursor: pointer; font-weight: 500;
+    background: var(--text); color: white;
+    transition: background .15s;
+    font-family: 'IBM Plex Sans Thai', sans-serif;
+  }
+  .btn:hover { background: #1E293B; }
+  .btn.ghost { background: var(--surface); color: var(--text); border: 1px solid var(--border-strong); }
+  .btn.ghost:hover { background: var(--surface-2); }
+  .btn.success { background: var(--ec); }
+  .btn.success:hover { background: #128572; }
+
+  /* ── Section title ──────────────────────────────────── */
+  .section-title {
+    font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--text-2); font-weight: 500; margin: 26px 0 12px;
+    display: flex; align-items: center; gap: 12px;
+    font-family: 'IBM Plex Sans', sans-serif;
+  }
+  .section-title::after {
+    content: ''; flex: 1; height: 1px; background: var(--border);
+  }
+  .section-title .count {
+    color: var(--muted); font-family: 'IBM Plex Mono', monospace;
+  }
+
+  /* ── Cards & grid ───────────────────────────────────── */
+  .grid { display: grid; gap: 14px; }
+  .grid-2 { grid-template-columns: 1fr 1fr; }
+  .grid-3 { grid-template-columns: repeat(3, 1fr); }
+  .grid-comp { grid-template-columns: 1.45fr 1fr; }
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; padding: 20px 22px;
+  }
+  .card h3 {
+    margin: 0 0 14px; font-size: 13px; color: var(--text-2);
+    text-transform: uppercase; letter-spacing: 0.08em; font-weight: 500;
+    font-family: 'IBM Plex Sans', sans-serif;
+  }
+  .card-head {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    margin-bottom: 14px; gap: 16px;
+  }
+  .card-title {
+    font-size: 15px; font-weight: 600; letter-spacing: -0.005em;
+    font-family: 'IBM Plex Sans Thai', sans-serif;
+  }
+  .card-sub {
+    font-size: 12px; color: var(--text-2); margin-top: 3px; line-height: 1.4;
+  }
+
+  /* ── Tables ─────────────────────────────────────────── */
+  table {
+    width: 100%; border-collapse: collapse; font-size: 12.5px;
+    font-family: 'IBM Plex Sans Thai', sans-serif;
+  }
+  th, td {
+    padding: 9px 10px; text-align: center;
+    border-bottom: 1px solid var(--border);
+  }
+  th {
+    background: var(--surface-2); color: var(--text-2);
+    font-weight: 500; font-size: 11px; letter-spacing: 0.04em;
+    text-transform: uppercase;
+    font-family: 'IBM Plex Sans', sans-serif;
+    white-space: nowrap;
+  }
+  td { color: var(--text); font-family: 'IBM Plex Mono', monospace; font-weight: 400; }
+  td.label { text-align: left; font-family: 'IBM Plex Sans Thai', sans-serif; font-weight: 500; }
+  tbody tr:last-child td { border-bottom: 0; }
+  tbody tr:hover { background: var(--surface-2); }
+  tr.row-total td {
+    background: var(--surface-2); font-weight: 600;
+    border-top: 1px solid var(--border-strong);
+  }
+
+  input[type=number] {
+    padding: 6px 8px; border: 1px solid var(--border);
+    border-radius: 6px; text-align: center;
+    font-size: 12.5px; font-family: 'IBM Plex Mono', monospace;
+    background: var(--surface); color: var(--text); width: 80px;
+    transition: border-color .12s, box-shadow .12s;
+  }
+  input[type=number]:focus {
+    outline: none; border-color: var(--mixed);
+    box-shadow: 0 0 0 3px var(--mixed-soft);
+  }
+  input.input-active {
+    background: white; border-color: var(--border-strong);
+    box-shadow: inset 3px 0 0 var(--mixed);
+  }
+  input.input-derived {
+    background: var(--surface-3); color: var(--muted); border-color: transparent;
+  }
+
+  /* ── Tags (inline kWh values) ───────────────────────── */
+  .tag {
+    display: inline-block; padding: 3px 8px; border-radius: 5px;
+    font-size: 12px; font-weight: 500;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .tag.ac { background: var(--ac-bg); color: var(--ac); }
+  .tag.ec { background: var(--ec-bg); color: var(--ec); }
+  .tag.mx { background: var(--mixed-bg); color: var(--mixed); }
+
+  /* ── Mode checkboxes ────────────────────────────────── */
+  .check-group {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+  }
+  .check-item {
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px 18px; border: 1px solid var(--border);
+    background: var(--surface); border-radius: 12px; cursor: pointer;
+    transition: all .15s; user-select: none;
+    position: relative;
+  }
+  .check-item:hover { border-color: var(--border-strong); }
+  .check-item input[type=checkbox] {
+    width: 16px; height: 16px; cursor: pointer; accent-color: var(--text); margin: 0;
+  }
+  .check-item .ci-body { flex: 1; }
+  .check-item .check-label {
+    font-weight: 600; font-size: 14px; margin-bottom: 2px;
+    font-family: 'IBM Plex Sans Thai', sans-serif;
+  }
+  .check-item .check-desc {
+    font-size: 11.5px; color: var(--text-2);
+    font-family: 'IBM Plex Sans Thai', sans-serif;
+  }
+  .check-item .swatch {
+    width: 4px; height: 36px; border-radius: 2px; background: var(--border-strong);
+  }
+  .check-item.active-ac { border-color: var(--ac); background: linear-gradient(180deg, var(--ac-bg), transparent); }
+  .check-item.active-ac .swatch { background: var(--ac); }
+  .check-item.active-ec { border-color: var(--ec); background: linear-gradient(180deg, var(--ec-bg), transparent); }
+  .check-item.active-ec .swatch { background: var(--ec); }
+  .check-item.active-mx { border-color: var(--mixed); background: linear-gradient(180deg, var(--mixed-bg), transparent); }
+  .check-item.active-mx .swatch { background: var(--mixed); }
+
+  /* ── Mixed config ────────────────────────────────────── */
+  #mixedConfig { margin-top: 12px; }
+  .mix-row {
+    display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+    padding: 4px 0;
+  }
+  .mix-item { display: flex; align-items: center; gap: 8px; }
+  .mix-item label { font-weight: 500; font-size: 13px; color: var(--text-2); }
+  .mix-item input { width: 64px; }
+  .mix-stat {
+    font-size: 13px; color: var(--text-2); padding: 6px 12px;
+    background: var(--surface-2); border-radius: 6px;
+    border: 1px solid var(--border);
+  }
+  .mix-stat strong { font-family: 'IBM Plex Mono', monospace; color: var(--text); }
+  .mix-warn {
+    color: var(--warn); font-size: 12.5px; font-weight: 500; margin-top: 10px;
+    padding: 8px 12px; background: rgba(220,38,38,0.06);
+    border-radius: 6px; border-left: 3px solid var(--warn);
+  }
+  .mix-hint {
+    font-size: 12px; color: var(--text-2); margin-top: 10px;
+    font-family: 'IBM Plex Sans Thai', sans-serif;
+  }
+
+  /* ── Mode sections (results) ────────────────────────── */
+  .mode-section {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; padding: 22px 24px; margin-top: 14px;
+    overflow-x: auto;
+  }
+  .mode-section .mode-head {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 14px;
+  }
+  .mode-section .mode-mark {
+    width: 4px; height: 22px; border-radius: 2px;
+  }
+  .mode-section h3.mode-title {
+    margin: 0; font-size: 15px; font-weight: 600;
+    text-transform: none; letter-spacing: -0.005em; color: var(--text);
+    font-family: 'IBM Plex Sans Thai', sans-serif;
+  }
+  .mode-section.border-ac .mode-mark { background: var(--ac); }
+  .mode-section.border-ec .mode-mark { background: var(--ec); }
+  .mode-section.border-mx .mode-mark { background: var(--mixed); }
+  .mode-section.border-ac { box-shadow: inset 4px 0 0 var(--ac-soft); }
+  .mode-section.border-ec { box-shadow: inset 4px 0 0 var(--ec-soft); }
+  .mode-section.border-mx { box-shadow: inset 4px 0 0 var(--mixed-soft); }
+
+  /* ── Summary cards (KPI strip on results) ───────────── */
+  .summary-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+  .summary-item {
+    padding: 12px 16px; border-radius: 10px;
+    background: var(--surface-2); border: 1px solid var(--border);
+    min-width: 160px;
+  }
+  .summary-item .s-label {
+    font-size: 10.5px; color: var(--text-2);
+    text-transform: uppercase; letter-spacing: 0.08em; font-weight: 500;
+    font-family: 'IBM Plex Sans', sans-serif;
+  }
+  .summary-item .s-val {
+    font-size: 20px; font-weight: 500; margin-top: 4px;
+    font-family: 'IBM Plex Mono', monospace; letter-spacing: -0.01em;
+  }
+
+  /* ── Comparison KPI cards (top-level) ───────────────── */
+  .kpi-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; padding: 18px 20px 16px;
+    position: relative; overflow: hidden;
+  }
+  .kpi-card.winner {
+    background: linear-gradient(140deg, #FFFFFF 0%, #F8F4FF 100%);
+    border-color: #D9CEFA;
+  }
+  .kpi-card.winner::before {
+    content: ''; position: absolute; right: -40px; top: -40px;
+    width: 130px; height: 130px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(124,91,223,0.14), transparent 70%);
+    pointer-events: none;
+  }
+  .kpi-card .winner-tag {
+    position: absolute; top: 14px; right: 14px;
+    font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase;
+    background: var(--mixed); color: white; padding: 3px 8px; border-radius: 4px;
+    font-weight: 600; font-family: 'IBM Plex Sans', sans-serif;
+  }
+  .kpi-label {
+    font-size: 11.5px; color: var(--text-2);
+    display: flex; align-items: center; gap: 8px; margin-bottom: 14px;
+    font-weight: 500; letter-spacing: 0.02em;
+    font-family: 'IBM Plex Sans', sans-serif;
+  }
+  .kpi-label .swatch { width: 10px; height: 10px; border-radius: 3px; }
+  .kpi-value {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 28px; font-weight: 500; letter-spacing: -0.02em;
+    line-height: 1; color: var(--text);
+  }
+  .kpi-value .unit {
+    font-size: 12px; color: var(--text-2); margin-left: 6px;
+    font-family: 'IBM Plex Sans Thai', sans-serif; font-weight: 400; letter-spacing: 0;
+  }
+  .kpi-foot {
+    margin-top: 12px; font-size: 12px;
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    color: var(--text-2); font-family: 'IBM Plex Sans Thai', sans-serif;
+  }
+  .delta { font-family: 'IBM Plex Mono', monospace; font-weight: 500; padding: 2px 6px; border-radius: 4px; }
+  .delta.neg { color: #0F8266; background: rgba(22,160,133,0.10); }
+  .delta.base { color: var(--text-2); background: var(--surface-2); border: 1px solid var(--border); }
+  .mini-bar {
+    margin-top: 10px; height: 4px; background: var(--surface-2);
+    border-radius: 2px; overflow: hidden; border: 1px solid var(--border);
+  }
+  .mini-bar > i { display: block; height: 100%; border-radius: 2px; background: currentColor; }
+
+  /* ── Charts ─────────────────────────────────────────── */
+  .chart-box {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; padding: 20px 22px 18px;
+    position: relative; min-height: 330px;
+  }
+  .chart-canvas-wrap { position: relative; height: 270px; }
+
+  /* ── Ranked list (chart 4 alt) ─────────────────────── */
+  .rank {
+    list-style: none; padding: 0; margin: 6px 0 0;
+    display: flex; flex-direction: column; gap: 14px;
+  }
+  .rank > li.rank-row {
+    display: grid; grid-template-columns: 22px 1fr auto; align-items: center;
+    gap: 12px;
+  }
+  .rank .rank-no {
+    font-family: 'IBM Plex Mono', monospace; color: var(--muted);
+    font-size: 11px; text-align: right;
+  }
+  .rank .rank-name {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px; color: var(--text-2);
+    font-family: 'IBM Plex Sans Thai', sans-serif;
+  }
+  .rank .rank-name .sq { width: 10px; height: 10px; border-radius: 3px; flex: 0 0 auto; }
+  .rank .rank-name strong { color: var(--text); font-weight: 600; }
+  .rank .rank-val {
+    font-family: 'IBM Plex Mono', monospace; font-size: 13.5px;
+    color: var(--text); font-weight: 500;
+  }
+  .rank .rank-bar-wrap {
+    grid-column: 1 / -1;
+    height: 10px; background: var(--surface-2); border-radius: 5px;
+    overflow: hidden; border: 1px solid var(--border);
+  }
+  .rank .rank-bar { height: 100%; border-radius: 5px; transition: width .4s ease; }
+  .rank .rank-delta {
+    font-family: 'IBM Plex Mono', monospace; font-size: 11.5px;
+    margin-left: 6px;
+  }
+  .rank .rank-delta.neg { color: var(--ec); }
+  .rank .rank-delta.base { color: var(--muted); }
+
+  .card-foot {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 16px; padding-top: 14px;
+    border-top: 1px dashed var(--border);
+    font-size: 12px; color: var(--text-2);
+    font-family: 'IBM Plex Sans Thai', sans-serif;
+  }
+  .card-foot .stat {
+    font-family: 'IBM Plex Mono', monospace; color: var(--text); font-weight: 500;
+  }
+  .card-foot .group { display: inline-flex; align-items: center; gap: 6px; }
+
+  /* ── Footer note ───────────────────────────────────── */
+  .footer-note {
+    font-size: 12px; color: var(--text-2); margin-top: 24px;
+    padding: 16px 18px; background: var(--surface);
+    border-radius: 12px; line-height: 1.6;
+    border: 1px solid var(--border);
+    font-family: 'IBM Plex Sans Thai', sans-serif;
+  }
+  .footer-note .ico {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 20px; height: 20px; background: var(--mixed-soft);
+    color: var(--mixed); border-radius: 5px; font-weight: 600;
+    font-family: 'IBM Plex Sans', sans-serif; font-size: 11px;
+    margin-right: 8px; vertical-align: -4px;
+  }
+  .footer-note code {
+    font-family: 'IBM Plex Mono', monospace; font-size: 11.5px;
+    background: var(--surface-2); padding: 2px 6px; border-radius: 4px;
+    border: 1px solid var(--border); color: var(--text);
+  }
+
+  /* Setup card mini-rows */
+  .setup-row {
+    display: flex; gap: 14px; flex-wrap: wrap; align-items: flex-end;
+    margin-top: 12px;
+  }
+  .setup-field { display: flex; flex-direction: column; gap: 6px; }
+  .setup-field label {
+    font-size: 11px; color: var(--text-2);
+    text-transform: uppercase; letter-spacing: 0.08em; font-weight: 500;
+    font-family: 'IBM Plex Sans', sans-serif;
+  }
+  .area-note {
+    font-size: 12px; color: var(--text-2); font-family: 'IBM Plex Sans Thai', sans-serif;
+    padding-bottom: 6px;
+  }
+  .area-note b { color: var(--text); font-family: 'IBM Plex Mono', monospace; font-weight: 500; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- ── Header ─────────────────────────────────────────── -->
+  <header class="header">
+    <div class="title-block">
+      <div class="eyebrow">Breeder Lifecycle Analysis · PS1</div>
+      <h1>Fan Comparison — เปรียบเทียบระบบพัดลม</h1>
+      <div class="sub">PS1 · Imperial (CFM, ft/min, ft²) · ติ๊กเลือกโหมดที่ต้องการเปรียบเทียบ</div>
+    </div>
+    <div class="meta">
+      <span class="pill"><span class="dot"></span>ข้อมูลล่าสุด <strong>14 พ.ค. 2569</strong></span>
+      <button class="btn ghost" onclick="recalc()">↻ คำนวณใหม่</button>
+      <button class="btn success" onclick="downloadCharts()">↓ บันทึกกราฟ</button>
+    </div>
+  </header>
+
+  <!-- ── Constants & Setup ─────────────────────────────── -->
+  <div class="section-title">ค่าคงที่ — Lab Data &amp; House Setup <span class="count">02</span></div>
+  <div class="grid grid-2">
+    <div class="card">
+      <h3>EC Fan — Lookup Table @ 0.25 inH₂O</h3>
+      <table id="labTable">
+        <thead><tr><th>RPM</th><th>Watts</th><th>CFM</th><th>CFM/W</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>House Setup — PS1</h3>
+      <div class="setup-row">
+        <div class="setup-field">
+          <label>พัดลมติดตั้ง (ตัว)</label>
+          <input type="number" id="ps1Fans" value="16" />
+        </div>
+        <div class="setup-field">
+          <label>พื้นที่ (m²)</label>
+          <input type="number" id="ps1Area" value="59.5" step="0.1" style="width:90px" />
+        </div>
+        <div class="area-note">= <b><span id="areaFt2">—</span></b> ft²</div>
+      </div>
+      <div class="setup-row">
+        <div class="setup-field">
+          <label>AC Watts / ตัว</label>
+          <input type="number" id="acW" value="2137" />
+        </div>
+        <div class="setup-field">
+          <label>AC CFM / ตัว</label>
+          <input type="number" id="acCFM" value="28900" style="width:100px" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Mode checkboxes ───────────────────────────────── -->
+  <div class="section-title">เลือกรูปแบบเปรียบเทียบ <span class="count">multi-select</span></div>
+  <div class="check-group">
+    <label class="check-item" id="chkAC">
+      <span class="swatch"></span>
+      <input type="checkbox" id="cbAC" checked />
+      <div class="ci-body">
+        <div class="check-label" style="color: var(--ac)">All AC</div>
+        <div class="check-desc">Baseline — Fixed-speed AC fans</div>
+      </div>
+    </label>
+    <label class="check-item" id="chkEC">
+      <span class="swatch"></span>
+      <input type="checkbox" id="cbEC" checked />
+      <div class="ci-body">
+        <div class="check-label" style="color: var(--ec)">All EC</div>
+        <div class="check-desc">Variable-speed EC fans</div>
+      </div>
+    </label>
+    <label class="check-item" id="chkMX">
+      <span class="swatch"></span>
+      <input type="checkbox" id="cbMX" />
+      <div class="ci-body">
+        <div class="check-label" style="color: var(--mixed)">Mixed</div>
+        <div class="check-desc">AC + EC ผสมในโรงเดียวกัน</div>
+      </div>
+    </label>
+  </div>
+
+  <!-- Mixed config -->
+  <div id="mixedConfig" class="card" style="display:none; margin-top: 12px;">
+    <h3>Mixed Configuration</h3>
+    <div class="mix-row">
+      <div class="mix-item"><label>AC Fans</label><input type="number" id="mixAC" value="8" min="0" /></div>
+      <div class="mix-item"><label>EC Fans</label><input type="number" id="mixEC" value="8" min="0" /></div>
+      <div class="mix-stat">รวม <strong><span id="mixTotal">16</span></strong> / ติดตั้ง <strong><span id="mixInstalled">16</span></strong> ตัว</div>
+    </div>
+    <div id="mixWarn" class="mix-warn" style="display:none"></div>
+    <p class="mix-hint">EC เปิดก่อน (ประหยัดกว่า) → ถ้ายังไม่พอค่อยเปิด AC เพิ่ม</p>
+  </div>
+
+  <!-- ── Lifecycle input table ─────────────────────────── -->
+  <div class="section-title">Lifecycle Profile — PS1 <span class="count">7 phases</span></div>
+  <div class="card" style="overflow-x:auto">
+    <p style="font-size:12px;color:var(--text-2);margin:0 0 12px 0;font-family:'IBM Plex Sans Thai',sans-serif">
+      แก้ไข <b style="color:var(--text)">CFM</b> หรือ <b style="color:var(--text)">จำนวนพัดลม</b> — อีกช่องคำนวณอัตโนมัติ (based on AC CFM)
+    </p>
+    <table id="inputTable">
+      <thead>
+        <tr>
+          <th>#</th><th>Phase</th><th>สัปดาห์</th><th>วัน</th>
+          <th>ชม. / วัน</th><th>CFM Target</th><th>พัดลม (AC)</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <!-- ── Result sections ───────────────────────────────── -->
+  <div id="acSection" class="mode-section border-ac" style="display:none">
+    <div class="mode-head">
+      <span class="mode-mark"></span>
+      <h3 class="mode-title" style="color:var(--ac)">All AC — Baseline</h3>
+    </div>
+    <table id="acTable"><thead></thead><tbody></tbody></table>
+    <div class="summary-row" id="acSummary"></div>
+  </div>
+
+  <div id="ecSection" class="mode-section border-ec" style="display:none">
+    <div class="mode-head">
+      <span class="mode-mark"></span>
+      <h3 class="mode-title" style="color:var(--ec)">All EC — Variable Speed</h3>
+    </div>
+    <table id="ecTable"><thead></thead><tbody></tbody></table>
+    <div class="summary-row" id="ecSummary"></div>
+  </div>
+
+  <div id="mxSection" class="mode-section border-mx" style="display:none">
+    <div class="mode-head">
+      <span class="mode-mark"></span>
+      <h3 class="mode-title" style="color:var(--mixed)" id="mxTitle">Mixed AC + EC</h3>
+    </div>
+    <table id="mxTable"><thead></thead><tbody></tbody></table>
+    <div class="summary-row" id="mxSummary"></div>
+  </div>
+
+  <!-- ── Comparison Summary KPI strip ──────────────────── -->
+  <div id="compSummary" style="display:none">
+    <div class="section-title">สรุปเปรียบเทียบ / รอบ <span class="count"><span id="cycleDays">469</span> วัน</span></div>
+    <div id="summaryCards" class="grid grid-3"></div>
+  </div>
+
+  <!-- ── Charts ─────────────────────────────────────────── -->
+  <div id="chartSection" style="display:none">
+    <div class="section-title">กราฟเปรียบเทียบ <span class="count">04 charts</span></div>
+    <div class="grid grid-comp">
+      <div class="chart-box">
+        <div class="card-head">
+          <div>
+            <div class="card-title">kWh ต่อ Phase</div>
+            <div class="card-sub">พลังงานที่ใช้ในแต่ละช่วง</div>
+          </div>
+        </div>
+        <div class="chart-canvas-wrap"><canvas id="chart1"></canvas></div>
+      </div>
+      <div class="chart-box">
+        <div class="card-head">
+          <div>
+            <div class="card-title">Velocity (ft/min) ต่อ Phase</div>
+            <div class="card-sub">ความเร็วลมเฉลี่ยในโรงเรือน</div>
+          </div>
+        </div>
+        <div class="chart-canvas-wrap"><canvas id="chart2"></canvas></div>
+      </div>
+    </div>
+    <div class="grid grid-comp" style="margin-top:14px">
+      <div class="chart-box">
+        <div class="card-head">
+          <div>
+            <div class="card-title">kWh สะสม</div>
+            <div class="card-sub">การใช้พลังงานสะสมตลอดรอบ — เส้นที่ต่ำกว่าคือประหยัดกว่า</div>
+          </div>
+        </div>
+        <div class="chart-canvas-wrap" style="height: 290px"><canvas id="chart3"></canvas></div>
+      </div>
+      <div class="chart-box">
+        <div class="card-head">
+          <div>
+            <div class="card-title">kWh รวมต่อรอบ — เปรียบเทียบ</div>
+            <div class="card-sub">สรุปการใช้พลังงานรวมของแต่ละระบบ</div>
+          </div>
+        </div>
+        <ol class="rank" id="rankList"></ol>
+        <div class="card-foot">
+          <span class="group">ช่วงสเกล: <span class="stat" id="rankScale">—</span></span>
+          <span class="group">หน่วย: <span class="stat">kWh / รอบ</span></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    <span class="ico">i</span>
+    <b>AC</b> fixed speed <code>28,900 CFM</code> / <code>2,137 W</code> · 
+    <b>EC</b> เลือก RPM ต่ำสุดที่ CFM/ตัว ≥ target · 
+    <b>EC fans</b> needed = <code>ceil(CFM ÷ 29,400)</code> · 
+    <b>Mixed</b> เปิด EC ก่อน แล้วเสริม AC · 
+    <b>V</b> (ft/min) = <code>CFM รวม ÷ ft²</code>
+  </div>
+</div>
+
+<script>
+/* ===== CONSTANTS & DATA ===== */
+const M2_TO_FT2 = 10.7639;
+const COL = { ac:'#E07A3C', ec:'#16A085', mx:'#7C5BDF', sv:'#2563EB' };
+const COL_SOFT = {
+  ac: 'rgba(224,122,60,0.14)',
+  ec: 'rgba(22,160,133,0.14)',
+  mx: 'rgba(124,91,223,0.16)',
+};
+
+const labData = [
+  {rpm:720, w:1970, cfm:29400},
+  {rpm:685, w:1748, cfm:27300},
+  {rpm:600, w:1268, cfm:22100},
+  {rpm:550, w:1040, cfm:19000},
+  {rpm:500, w:794,  cfm:14400},
+  {rpm:450, w:529,  cfm:7300},
+  {rpm:0,   w:0,    cfm:0},
+];
+
+const phases = [
+  {n:1, name:'Brooding',        weeks:'1–3',   days:21,  cfm:23120,  hrs:4,  mode:'cfm'},
+  {n:2, name:'Starter',         weeks:'4–8',   days:35,  cfm:69360,  hrs:18, mode:'cfm'},
+  {n:3, name:'Grower',          weeks:'9–16',  days:56,  cfm:161840, hrs:24, mode:'cfm'},
+  {n:4, name:'Pre-lay',         weeks:'17–22', days:42,  cfm:277440, hrs:24, mode:'cfm'},
+  {n:5, name:'Peak production', weeks:'23–45', days:161, cfm:416160, hrs:24, mode:'cfm'},
+  {n:6, name:'Late production', weeks:'46–65', days:140, cfm:346800, hrs:24, mode:'cfm'},
+  {n:7, name:'พักโรง',           weeks:'66–67', days:14,  cfm:0,      hrs:0,  mode:'cfm'},
+];
+
+/* ===== UTILITIES ===== */
+const fmt = n => Math.round(n).toLocaleString();
+
+function renderLab(){
+  document.querySelector('#labTable tbody').innerHTML = labData.map(d =>
+    `<tr><td>${d.rpm}</td><td>${d.w.toLocaleString()}</td><td>${d.cfm.toLocaleString()}</td><td>${d.w>0?(d.cfm/d.w).toFixed(2):'—'}</td></tr>`
+  ).join('');
+}
+
+function findEC(cfmNeeded){
+  for(let i=0;i<labData.length;i++){
+    if(labData[i].cfm>=cfmNeeded){
+      if(i+1<labData.length && labData[i+1].cfm>=cfmNeeded) continue;
+      return labData[i];
+    }
+  }
+  return labData[0];
+}
+
+let charts = {};
+function destroyCharts(){ Object.values(charts).forEach(c=>c&&c.destroy()); charts={}; }
+
+/* ===== CHECKBOX STATE ===== */
+function getChecked(){
+  return {
+    ac: document.getElementById('cbAC').checked,
+    ec: document.getElementById('cbEC').checked,
+    mx: document.getElementById('cbMX').checked,
+  };
+}
+
+function updateCheckStyles(){
+  const s = getChecked();
+  document.getElementById('chkAC').className = 'check-item' + (s.ac?' active-ac':'');
+  document.getElementById('chkEC').className = 'check-item' + (s.ec?' active-ec':'');
+  document.getElementById('chkMX').className = 'check-item' + (s.mx?' active-mx':'');
+  document.getElementById('mixedConfig').style.display = s.mx ? 'block' : 'none';
+}
+
+/* ===== RENDER INPUT TABLE ===== */
+function renderInputTable(acCFM, maxFans){
+  const tbody = document.querySelector('#inputTable tbody');
+  tbody.innerHTML = phases.map((p,i) => {
+    const warn = p.fans>maxFans ? 'style="color:var(--warn);font-weight:600"' : '';
+    const cfmClass = p.mode==='cfm' ? 'input-active' : 'input-derived';
+    const fansClass = p.mode==='fans' ? 'input-active' : 'input-derived';
+    return `<tr>
+      <td>${p.n}</td>
+      <td class="label">${p.name}</td>
+      <td>${p.weeks}</td>
+      <td><input type="number" data-i="${i}" data-f="days" value="${p.days}" style="width:54px"></td>
+      <td><input type="number" data-i="${i}" data-f="hrs" value="${p.hrs}" style="width:50px"></td>
+      <td><input type="number" data-i="${i}" data-f="cfm" value="${p.cfm}" class="${cfmClass}" style="width:110px"></td>
+      <td><input type="number" data-i="${i}" data-f="fans" value="${p.fans}" class="${fansClass}" style="width:60px" ${warn} min="0"></td>
+    </tr>`;
+  }).join('');
+}
+
+/* ===== CORE RECALC ===== */
+function recalc(){
+  const acW      = +document.getElementById('acW').value;
+  const acCFM    = +document.getElementById('acCFM').value;
+  const ecMaxCFM = labData[0].cfm;
+  const maxFans  = +document.getElementById('ps1Fans').value;
+  const areaM2   = +document.getElementById('ps1Area').value;
+  const areaFt2  = areaM2 * M2_TO_FT2;
+  document.getElementById('areaFt2').textContent = areaFt2.toFixed(1);
+
+  phases.forEach(p => {
+    if(p.mode==='fans') p.cfm = (p.fans||0)*acCFM;
+    else p.fans = p.cfm>0 ? Math.ceil(p.cfm/acCFM) : 0;
+  });
+
+  renderInputTable(acCFM, maxFans);
+
+  const P = {acW, acCFM, ecMaxCFM, maxFans, areaFt2};
+  const checked = getChecked();
+  const anyChecked = checked.ac || checked.ec || checked.mx;
+
+  const acData = computeAC(P);
+  const ecData = computeEC(P);
+  const mxData = computeMixed(P);
+
+  document.getElementById('acSection').style.display = checked.ac ? 'block' : 'none';
+  document.getElementById('ecSection').style.display = checked.ec ? 'block' : 'none';
+  document.getElementById('mxSection').style.display = checked.mx ? 'block' : 'none';
+  document.getElementById('compSummary').style.display = anyChecked ? 'block' : 'none';
+  document.getElementById('chartSection').style.display = anyChecked ? 'block' : 'none';
+
+  if(checked.ac) renderACTable(acData, P);
+  if(checked.ec) renderECTable(ecData, P);
+  if(checked.mx) renderMXTable(mxData, P);
+
+  renderSummary(acData, ecData, mxData, checked);
+  renderCharts(acData, ecData, mxData, checked);
+}
+
+/* ===== COMPUTE FUNCTIONS ===== */
+function computeAC(P){
+  let total=0;
+  const rows = phases.map(p => {
+    const off = p.fans===0;
+    const cfmT = p.fans * P.acCFM;
+    const vel = off ? 0 : cfmT / P.areaFt2;
+    const kWh = p.fans * P.acW * p.hrs * p.days / 1000;
+    total += kWh;
+    return {fans:p.fans, cfmT, vel, kWh, off};
+  });
+  return {rows, total};
+}
+
+function computeEC(P){
+  let total=0;
+  const rows = phases.map(p => {
+    const off = p.cfm===0;
+    if(off) return {fans:0, rpm:0, w:0, cfmT:0, vel:0, kWh:0, off:true};
+    const fans = Math.ceil(p.cfm / P.ecMaxCFM);
+    const cfmPer = p.cfm / fans;
+    const ec = findEC(cfmPer);
+    const cfmT = fans * ec.cfm;
+    const vel = cfmT / P.areaFt2;
+    const kWh = fans * ec.w * p.hrs * p.days / 1000;
+    total += kWh;
+    return {fans, rpm:ec.rpm, w:ec.w, cfmT, vel, kWh, off:false};
+  });
+  return {rows, total};
+}
+
+function computeMixed(P){
+  const nAC = +document.getElementById('mixAC').value;
+  const nEC = +document.getElementById('mixEC').value;
+  const nTotal = nAC + nEC;
+  document.getElementById('mixTotal').textContent = nTotal;
+  document.getElementById('mixInstalled').textContent = P.maxFans;
+  const warnEl = document.getElementById('mixWarn');
+  if(nTotal > P.maxFans){ warnEl.style.display='block'; warnEl.textContent=`⚠ รวม ${nTotal} ตัว เกินจำนวนติดตั้ง ${P.maxFans} ตัว`; }
+  else if(nTotal < P.maxFans){ warnEl.style.display='block'; warnEl.textContent=`⚠ รวม ${nTotal} ตัว น้อยกว่าติดตั้ง ${P.maxFans} ตัว`; }
+  else { warnEl.style.display='none'; }
+
+  let total=0;
+  const rows = phases.map(p => {
+    const off = p.fans===0;
+    const fansNeeded = p.fans;
+    const ecOn = Math.min(fansNeeded, nEC);
+    const acOn = Math.min(fansNeeded - ecOn, nAC);
+
+    let ecRpm=0, ecWFan=0, ecCfmT=0, acCfmT=acOn*P.acCFM;
+    if(ecOn>0 && !off){
+      const ecCfmNeeded = Math.max(0, p.cfm - acCfmT);
+      const ecPer = ecCfmNeeded / ecOn;
+      const ec = findEC(ecPer);
+      ecRpm=ec.rpm; ecWFan=ec.w; ecCfmT=ecOn*ec.cfm;
+    }
+    const cfmT = acCfmT + ecCfmT;
+    const vel = off ? 0 : cfmT / P.areaFt2;
+    const kWh = (acOn*P.acW + ecOn*ecWFan) * p.hrs * p.days / 1000;
+    total += kWh;
+    return {acOn, ecOn, ecRpm, ecWFan, cfmT, vel, kWh, off};
+  });
+  return {rows, total, nAC, nEC};
+}
+
+/* ===== RENDER TABLES ===== */
+function renderACTable(data, P){
+  document.querySelector('#acTable thead').innerHTML = `<tr>
+    <th>#</th><th>Phase</th><th>ตัวเปิด</th><th>CFM รวม</th><th>V (ft/min)</th><th>W/ตัว</th><th>kWh</th></tr>`;
+  const tbody = document.querySelector('#acTable tbody');
+  tbody.innerHTML = data.rows.map((r,i) => {
+    const p = phases[i]; const d = v => r.off?'—':v;
+    return `<tr><td>${p.n}</td><td class="label">${p.name}</td>
+      <td>${d(r.fans)}</td><td>${d(fmt(r.cfmT))}</td><td>${d(Math.round(r.vel))}</td>
+      <td>${d(P.acW.toLocaleString())}</td>
+      <td>${r.kWh>0?'<span class="tag ac">'+fmt(r.kWh)+'</span>':'—'}</td></tr>`;
+  }).join('') + `<tr class="row-total"><td colspan="6" style="text-align:right">รวม</td>
+    <td><span class="tag ac">${fmt(data.total)}</span></td></tr>`;
+  document.getElementById('acSummary').innerHTML =
+    summaryItem('kWh / รอบ', fmt(data.total), 'var(--ac)') +
+    summaryItem('kWh / ปี',  fmt(data.total*365/totalDays()), 'var(--ac)');
+}
+
+function renderECTable(data, P){
+  document.querySelector('#ecTable thead').innerHTML = `<tr>
+    <th>#</th><th>Phase</th><th>ตัวเปิด</th><th>RPM</th><th>W/ตัว</th><th>CFM รวม</th><th>V (ft/min)</th><th>kWh</th></tr>`;
+  const tbody = document.querySelector('#ecTable tbody');
+  tbody.innerHTML = data.rows.map((r,i) => {
+    const p = phases[i]; const d = v => r.off?'—':v;
+    return `<tr><td>${p.n}</td><td class="label">${p.name}</td>
+      <td>${d(r.fans)}</td><td>${d(r.rpm)}</td><td>${r.w>0?r.w.toLocaleString():'—'}</td>
+      <td>${d(fmt(r.cfmT))}</td><td>${d(Math.round(r.vel))}</td>
+      <td>${r.kWh>0?'<span class="tag ec">'+fmt(r.kWh)+'</span>':'—'}</td></tr>`;
+  }).join('') + `<tr class="row-total"><td colspan="7" style="text-align:right">รวม</td>
+    <td><span class="tag ec">${fmt(data.total)}</span></td></tr>`;
+  document.getElementById('ecSummary').innerHTML =
+    summaryItem('kWh / รอบ', fmt(data.total), 'var(--ec)') +
+    summaryItem('kWh / ปี',  fmt(data.total*365/totalDays()), 'var(--ec)');
+}
+
+function renderMXTable(data, P){
+  document.getElementById('mxTitle').textContent = `Mixed (${data.nAC} AC + ${data.nEC} EC)`;
+  document.querySelector('#mxTable thead').innerHTML = `<tr>
+    <th>#</th><th>Phase</th><th>AC เปิด</th><th>EC เปิด</th><th>EC RPM</th><th>EC W/ตัว</th><th>CFM รวม</th><th>V (ft/min)</th><th>kWh</th></tr>`;
+  const tbody = document.querySelector('#mxTable tbody');
+  tbody.innerHTML = data.rows.map((r,i) => {
+    const p = phases[i]; const d = v => r.off?'—':v;
+    return `<tr><td>${p.n}</td><td class="label">${p.name}</td>
+      <td>${d(r.acOn)}</td><td>${d(r.ecOn)}</td><td>${d(r.ecRpm)}</td>
+      <td>${r.ecWFan>0?r.ecWFan.toLocaleString():'—'}</td>
+      <td>${d(fmt(r.cfmT))}</td><td>${d(Math.round(r.vel))}</td>
+      <td>${r.kWh>0?'<span class="tag mx">'+fmt(r.kWh)+'</span>':'—'}</td></tr>`;
+  }).join('') + `<tr class="row-total"><td colspan="8" style="text-align:right">รวม</td>
+    <td><span class="tag mx">${fmt(data.total)}</span></td></tr>`;
+  document.getElementById('mxSummary').innerHTML =
+    summaryItem('kWh / รอบ', fmt(data.total), 'var(--mixed)') +
+    summaryItem('kWh / ปี',  fmt(data.total*365/totalDays()), 'var(--mixed)');
+}
+
+function summaryItem(label, val, color){
+  return `<div class="summary-item"><div class="s-label">${label}</div><div class="s-val" style="color:${color}">${val}</div></div>`;
+}
+function totalDays(){ return phases.reduce((s,p)=>s+p.days,0); }
+
+/* ===== COMPARISON SUMMARY (KPI strip) ===== */
+function renderSummary(acData, ecData, mxData, checked){
+  const days = totalDays();
+  document.getElementById('cycleDays').textContent = days;
+  let html = '';
+
+  // figure out winner
+  const candidates = [];
+  if(checked.ac) candidates.push({k:'ac', total: acData.total});
+  if(checked.ec) candidates.push({k:'ec', total: ecData.total});
+  if(checked.mx) candidates.push({k:'mx', total: mxData.total});
+  const winner = candidates.length>1 ? candidates.reduce((a,b)=> a.total<b.total?a:b).k : null;
+  const baseline = checked.ac ? acData.total : (candidates[0]?.total || 0);
+
+  function card(k, label, total, color, swatchColor){
+    const pct = (k!=='ac' && checked.ac && acData.total>0) ? ((acData.total-total)/acData.total*100) : null;
+    const isWinner = winner===k;
+    const widthPct = baseline>0 ? Math.min(100, (total/baseline)*100) : 0;
+    return `
+      <div class="kpi-card${isWinner ? ' winner' : ''}" style="color:${color}">
+        ${isWinner ? '<span class="winner-tag">Best</span>' : ''}
+        <div class="kpi-label"><span class="swatch" style="background:${swatchColor}"></span>${label}</div>
+        <div class="kpi-value">${fmt(total)}<span class="unit">kWh / รอบ</span></div>
+        <div class="kpi-foot">
+          ${pct===null
+            ? '<span class="delta base">baseline</span><span>เปรียบเทียบเป็นเกณฑ์</span>'
+            : `<span class="delta neg">−${pct.toFixed(1)}%</span><span>ประหยัด ${fmt(acData.total-total)} kWh</span>`
+          }
+        </div>
+        <div class="mini-bar" style="color:${swatchColor}"><i style="width:${widthPct}%"></i></div>
+        <div style="margin-top:10px;font-size:11.5px;color:var(--text-2);font-family:'IBM Plex Sans Thai',sans-serif">
+          ≈ <strong style="font-family:'IBM Plex Mono',monospace;color:var(--text)">${fmt(total*365/days)}</strong> kWh / ปี
+        </div>
+      </div>`;
+  }
+
+  if(checked.ac) html += card('ac', 'All AC',  acData.total, 'var(--ac)',    COL.ac);
+  if(checked.ec) html += card('ec', 'All EC',  ecData.total, 'var(--ec)',    COL.ec);
+  if(checked.mx) html += card('mx', `Mixed (${mxData.nAC}AC + ${mxData.nEC}EC)`, mxData.total, 'var(--mixed)', COL.mx);
+
+  if(checked.ac && (checked.ec || checked.mx)){
+    const best = checked.ec && checked.mx ? Math.min(ecData.total, mxData.total) : (checked.ec ? ecData.total : mxData.total);
+    const sv = acData.total - best;
+    html += `
+      <div class="kpi-card" style="color:var(--save)">
+        <div class="kpi-label"><span class="swatch" style="background:var(--save)"></span>ประหยัดสูงสุด vs AC</div>
+        <div class="kpi-value">${fmt(sv)}<span class="unit">kWh / รอบ</span></div>
+        <div class="kpi-foot">
+          <span class="delta neg">−${(sv/acData.total*100).toFixed(1)}%</span>
+          <span>≈ ${fmt(sv*365/days)} kWh / ปี</span>
+        </div>
+        <div class="mini-bar" style="color:var(--save)"><i style="width:${Math.min(100, sv/acData.total*100)}%"></i></div>
+      </div>`;
+  }
+
+  const grid = document.getElementById('summaryCards');
+  const n = (checked.ac?1:0)+(checked.ec?1:0)+(checked.mx?1:0)+((checked.ac && (checked.ec || checked.mx))?1:0);
+  grid.className = 'grid' + (n>=4 ? '' : ' grid-3');
+  grid.style.gridTemplateColumns = `repeat(${Math.max(n,1)}, 1fr)`;
+  grid.innerHTML = html;
+}
+
+/* ===== CHARTS ===== */
+Chart.defaults.font.family = "'IBM Plex Sans Thai', 'IBM Plex Sans', system-ui, sans-serif";
+Chart.defaults.font.size = 11.5;
+Chart.defaults.color = '#64748B';
+Chart.defaults.plugins.tooltip.backgroundColor = '#0F172A';
+Chart.defaults.plugins.tooltip.titleColor = '#FFFFFF';
+Chart.defaults.plugins.tooltip.bodyColor = '#CBD5E1';
+Chart.defaults.plugins.tooltip.borderColor = '#1E293B';
+Chart.defaults.plugins.tooltip.borderWidth = 1;
+Chart.defaults.plugins.tooltip.padding = { top: 10, right: 12, bottom: 10, left: 12 };
+Chart.defaults.plugins.tooltip.cornerRadius = 8;
+Chart.defaults.plugins.tooltip.boxPadding = 6;
+Chart.defaults.plugins.tooltip.usePointStyle = true;
+Chart.defaults.plugins.tooltip.titleFont = { size: 11, weight: '500', family: "'IBM Plex Sans', sans-serif" };
+Chart.defaults.plugins.tooltip.bodyFont = { size: 12, weight: '400', family: "'IBM Plex Sans Thai', sans-serif" };
+
+const axisGrid = { color: '#EEF0F4', drawTicks: false, drawBorder: false, lineWidth: 1 };
+const fmtAxis = v => v >= 1000 ? (Math.round(v/100)/10).toFixed(1).replace('.0','')+'k' : v;
+const axisX = {
+  grid: { display: false, drawBorder: false },
+  ticks: { padding: 8, color: '#64748B', font: { size: 11 } },
+  border: { display: false },
+};
+const axisY = (titleText) => ({
+  beginAtZero: true,
+  grid: axisGrid,
+  border: { display: false },
+  ticks: {
+    padding: 8, color: '#94A3B8',
+    font: { size: 10.5, family: "'IBM Plex Mono', monospace" },
+    callback: fmtAxis, maxTicksLimit: 6,
+  },
+  title: titleText ? { display: true, text: titleText, color: '#94A3B8', font: { size: 10.5, family: "'IBM Plex Sans', sans-serif" } } : undefined,
+});
+
+function legendPlugin(){
+  return {
+    display: true,
+    position: 'top',
+    align: 'end',
+    labels: {
+      boxWidth: 10, boxHeight: 10, padding: 14, color: '#475569',
+      font: { size: 11.5, family: "'IBM Plex Sans Thai', sans-serif" },
+      usePointStyle: true, pointStyle: 'rectRounded',
+    }
+  };
+}
+
+function makeGradient(canvas, color, soft){
+  const ctx = canvas.getContext('2d');
+  const g = ctx.createLinearGradient(0, 0, 0, canvas.height);
+  g.addColorStop(0, soft);
+  g.addColorStop(1, 'rgba(255,255,255,0.05)');
+  return g;
+}
+
+function renderCharts(acData, ecData, mxData, checked){
+  destroyCharts();
+  const labels = phases.map(p=>p.name);
+  const anyData = checked.ac || checked.ec || checked.mx;
+  if(!anyData) return;
+
+  const barStyle = (color) => ({
+    backgroundColor: color,
+    borderRadius: { topLeft: 4, topRight: 4, bottomLeft: 0, bottomRight: 0 },
+    borderSkipped: false,
+    barPercentage: 0.78,
+    categoryPercentage: 0.72,
+    hoverBackgroundColor: color,
+  });
+
+  /* Chart 1 — kWh per Phase */
+  const ds1 = [];
+  if(checked.ac) ds1.push({label:'AC',    data:acData.rows.map(r=>r.kWh), ...barStyle(COL.ac)});
+  if(checked.ec) ds1.push({label:'EC',    data:ecData.rows.map(r=>r.kWh), ...barStyle(COL.ec)});
+  if(checked.mx) ds1.push({label:'Mixed', data:mxData.rows.map(r=>r.kWh), ...barStyle(COL.mx)});
+  charts.c1 = new Chart(document.getElementById('chart1'),{
+    type:'bar',
+    data:{labels,datasets:ds1},
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      interaction:{mode:'index',intersect:false},
+      plugins:{
+        legend: legendPlugin(),
+        tooltip:{ callbacks:{ label:(c)=>`  ${c.dataset.label.padEnd(6)} ${fmt(c.parsed.y)} kWh` } }
+      },
+      scales:{ x: axisX, y: axisY('kWh') }
+    }
+  });
+
+  /* Chart 2 — Velocity per Phase */
+  const ds2 = [];
+  if(checked.ac) ds2.push({label:'AC',    data:acData.rows.map(r=>Math.round(r.vel)), ...barStyle(COL.ac)});
+  if(checked.ec) ds2.push({label:'EC',    data:ecData.rows.map(r=>Math.round(r.vel)), ...barStyle(COL.ec)});
+  if(checked.mx) ds2.push({label:'Mixed', data:mxData.rows.map(r=>Math.round(r.vel)), ...barStyle(COL.mx)});
+  charts.c2 = new Chart(document.getElementById('chart2'),{
+    type:'bar',
+    data:{labels,datasets:ds2},
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      interaction:{mode:'index',intersect:false},
+      plugins:{
+        legend: legendPlugin(),
+        tooltip:{ callbacks:{ label:(c)=>`  ${c.dataset.label.padEnd(6)} ${fmt(c.parsed.y)} ft/min` } }
+      },
+      scales:{ x: axisX, y: axisY('ft/min') }
+    }
+  });
+
+  /* Chart 3 — Cumulative kWh */
+  const c3canvas = document.getElementById('chart3');
+  const lineStyle = (color, soft) => ({
+    borderColor: color,
+    backgroundColor: makeGradient(c3canvas, color, soft),
+    pointBackgroundColor: color,
+    pointBorderColor: '#FFFFFF',
+    pointBorderWidth: 2,
+    pointRadius: 4,
+    pointHoverRadius: 6,
+    borderWidth: 2.2,
+    tension: 0.35,
+    fill: true,
+  });
+  const ds3 = [];
+  if(checked.ac){ let c=0; ds3.push({label:'AC สะสม',    data:acData.rows.map(r=>(c+=r.kWh,c)), ...lineStyle(COL.ac, COL_SOFT.ac)}); }
+  if(checked.ec){ let c=0; ds3.push({label:'EC สะสม',    data:ecData.rows.map(r=>(c+=r.kWh,c)), ...lineStyle(COL.ec, COL_SOFT.ec)}); }
+  if(checked.mx){ let c=0; ds3.push({label:'Mixed สะสม', data:mxData.rows.map(r=>(c+=r.kWh,c)), ...lineStyle(COL.mx, COL_SOFT.mx)}); }
+  charts.c3 = new Chart(c3canvas,{
+    type:'line',
+    data:{labels,datasets:ds3},
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      interaction:{mode:'index',intersect:false},
+      plugins:{
+        legend: legendPlugin(),
+        tooltip:{ callbacks:{ label:(c)=>`  ${c.dataset.label.padEnd(10)} ${fmt(c.parsed.y)} kWh` } }
+      },
+      scales:{ x: axisX, y: axisY('kWh สะสม') }
+    }
+  });
+
+  /* Chart 4 — Ranked list (HTML, not Chart.js) */
+  renderRankList(acData, ecData, mxData, checked);
+}
+
+function renderRankList(acData, ecData, mxData, checked){
+  const items = [];
+  if(checked.ac) items.push({ key:'ac', name:'All AC',  sub:'AC ทั้งโรง',  total: acData.total, color: COL.ac, gradFrom:'#EC9866' });
+  if(checked.ec) items.push({ key:'ec', name:'All EC',  sub:'EC ทั้งโรง',  total: ecData.total, color: COL.ec, gradFrom:'#3FB89E' });
+  if(checked.mx) items.push({ key:'mx', name:'Mixed',   sub:`${mxData.nAC} AC + ${mxData.nEC} EC`, total: mxData.total, color: COL.mx, gradFrom:'#9C7DEF' });
+
+  // sort ascending: best (least kWh) first
+  items.sort((a,b)=> a.total - b.total);
+  const max = Math.max(...items.map(i=>i.total), 1);
+  const baseline = checked.ac ? acData.total : max;
+
+  const list = document.getElementById('rankList');
+  if(!list) return;
+  list.innerHTML = items.map((it, idx) => {
+    const widthPct = (it.total / max) * 100;
+    const delta = (it.key !== 'ac' && checked.ac && acData.total > 0)
+      ? `<span class="rank-delta neg">−${((acData.total-it.total)/acData.total*100).toFixed(1)}%</span>`
+      : (it.key === 'ac' && items.length > 1 ? '<span class="rank-delta base">baseline</span>' : '');
+    const rankNo = String(idx+1).padStart(2,'0');
+    return `
+      <li class="rank-row">
+        <span class="rank-no">${rankNo}</span>
+        <span class="rank-name">
+          <span class="sq" style="background:${it.color}"></span>
+          <strong>${it.name}</strong>
+          <span style="color:var(--muted)">· ${it.sub}</span>
+          ${delta}
+        </span>
+        <span class="rank-val">${fmt(it.total)} kWh</span>
+      </li>
+      <li class="rank-bar-wrap">
+        <div class="rank-bar" style="width:${widthPct}%; background: linear-gradient(90deg, ${it.gradFrom}, ${it.color});"></div>
+      </li>
+    `;
+  }).join('');
+
+  const scaleEl = document.getElementById('rankScale');
+  if(scaleEl) scaleEl.textContent = `0 – ${fmt(Math.ceil(max/50000)*50000)} kWh`;
+}
+
+/* ===== DOWNLOAD ===== */
+function downloadCharts(){
+  ['chart1','chart2','chart3'].forEach((id,i) => {
+    const c=document.getElementById(id); if(!c) return;
+    const a=document.createElement('a');
+    a.download=`ps1_compare_chart${i+1}.png`;
+    a.href=c.toDataURL('image/png'); a.click();
+  });
+}
+
+/* ===== EVENT HANDLERS ===== */
+document.querySelector('#inputTable').addEventListener('change', e => {
+  const el=e.target;
+  if(!el.dataset||!el.dataset.i) return;
+  const idx=+el.dataset.i, f=el.dataset.f, v=+el.value;
+  const acCFM=+document.getElementById('acCFM').value;
+  if(f==='cfm')      { phases[idx].cfm=v;  phases[idx].mode='cfm'; }
+  else if(f==='fans'){ phases[idx].fans=v;  phases[idx].mode='fans'; phases[idx].cfm=v*acCFM; }
+  else               { phases[idx][f]=v; }
+  recalc();
+});
+
+['acW','acCFM','ps1Fans','ps1Area'].forEach(id =>
+  document.getElementById(id).addEventListener('change', recalc));
+['mixAC','mixEC'].forEach(id =>
+  document.getElementById(id).addEventListener('change', recalc));
+['cbAC','cbEC','cbMX'].forEach(id =>
+  document.getElementById(id).addEventListener('change', ()=>{ updateCheckStyles(); recalc(); }));
+
+renderLab();
+updateCheckStyles();
+recalc();
+</script>
+</body>
+</html>
