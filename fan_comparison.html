@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<title>Fan Comparison — PS1</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  *{box-sizing:border-box}
+  body{font-family:-apple-system,'Segoe UI','Sarabun',sans-serif;margin:0;padding:20px;background:#f5f7fa;color:#1a1a1a}
+  h1{font-size:22px;margin:0 0 4px 0}
+  .subtitle{color:#666;font-size:13px;margin-bottom:20px}
+  .container{max-width:1800px;margin:0 auto}
+  .grid{display:grid;gap:16px}
+  .grid-3{grid-template-columns:repeat(3,1fr)}
+  .grid-2{grid-template-columns:repeat(2,1fr)}
+  .card{background:white;border-radius:8px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+  .card h3{margin:0 0 12px 0;font-size:14px;color:#555;text-transform:uppercase;letter-spacing:.5px}
+  .metric{font-size:28px;font-weight:700}
+  .metric.ac{color:#d97706}
+  .metric.ec{color:#059669}
+  .metric.mx{color:#7c3aed}
+  .metric.save{color:#2563eb}
+  .metric-sub{font-size:12px;color:#888;margin-top:2px}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{background:#f0f4f8;padding:6px 8px;text-align:center;font-weight:600;border:1px solid #d0d7de;white-space:nowrap}
+  td{padding:5px 6px;text-align:center;border:1px solid #e1e4e8;white-space:nowrap}
+  td.label{text-align:left}
+  input[type=number]{padding:3px;border:1px solid #ccc;border-radius:4px;text-align:center;font-size:12px}
+  .tag{display:inline-block;padding:2px 6px;border-radius:4px;font-size:11px;font-weight:600}
+  .tag.ac{background:#fef3c7;color:#92400e}
+  .tag.ec{background:#d1fae5;color:#065f46}
+  .tag.mx{background:#ede9fe;color:#5b21b6}
+  .tag.v{background:#dbeafe;color:#1e40af}
+  .section-title{font-size:16px;font-weight:700;margin:24px 0 12px 0;padding-left:8px;border-left:4px solid #2563eb}
+  .chart-box{background:white;border-radius:8px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.08);height:360px;position:relative}
+  .btn{background:#2563eb;color:white;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;font-size:13px}
+  .btn:hover{background:#1d4ed8}
+  .footer-note{font-size:11px;color:#888;margin-top:20px;padding:12px;background:#f9fafb;border-radius:6px}
+  th.grp-ac{background:#fef3c7;color:#92400e}
+  th.grp-ec{background:#d1fae5;color:#065f46}
+  th.grp-mx{background:#ede9fe;color:#5b21b6}
+  th.grp-save{background:#dbeafe;color:#1e40af}
+  th.grp-tgt{background:#e2e8f0;color:#334155}
+  tr.row-total td{background:#f8fafc;font-weight:700;border-top:2px solid #94a3b8}
+
+  .check-group{display:flex;gap:16px;flex-wrap:wrap;align-items:center}
+  .check-item{display:flex;align-items:center;gap:8px;padding:10px 18px;border:2px solid #e2e8f0;border-radius:10px;cursor:pointer;transition:all .2s;user-select:none}
+  .check-item:hover{border-color:#93c5fd;background:#f8fafc}
+  .check-item.active-ac{border-color:#d97706;background:#fffbeb}
+  .check-item.active-ec{border-color:#059669;background:#ecfdf5}
+  .check-item.active-mx{border-color:#7c3aed;background:#f5f3ff}
+  .check-item input[type=checkbox]{width:18px;height:18px;accent-color:#2563eb;cursor:pointer}
+  .check-label{font-weight:700;font-size:15px}
+  .check-desc{font-size:12px;color:#64748b}
+
+  #mixedConfig{margin-top:12px}
+  .mix-row{display:flex;align-items:center;gap:24px;flex-wrap:wrap}
+  .mix-item label{font-weight:600;font-size:13px;margin-right:6px}
+  .mix-item input{width:60px}
+  .mix-warn{color:#dc2626;font-size:12px;font-weight:600;margin-top:8px}
+
+  .mode-section{margin-top:20px;border:2px solid #e2e8f0;border-radius:10px;padding:16px;overflow-x:auto}
+  .mode-section.border-ac{border-color:#f59e0b}
+  .mode-section.border-ec{border-color:#10b981}
+  .mode-section.border-mx{border-color:#8b5cf6}
+  .mode-section h3{margin:0 0 10px 0;font-size:15px}
+
+  .summary-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:16px}
+  .summary-item{padding:10px 16px;border-radius:8px;background:#f8fafc;border:1px solid #e2e8f0;min-width:160px}
+  .summary-item .s-label{font-size:11px;color:#64748b;text-transform:uppercase}
+  .summary-item .s-val{font-size:20px;font-weight:700;margin-top:2px}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Fan Comparison — PS1 (Breeder Lifecycle)</h1>
+  <div class="subtitle">PS1 | Imperial (CFM, ft/min, ft²) | ติ๊กเลือกโหมดที่ต้องการเปรียบเทียบ</div>
+
+  <div class="section-title">ค่าคงที่ — Lab Data & House Setup</div>
+  <div class="grid grid-2">
+    <div class="card">
+      <h3>EC Fan — Lookup Table @ 0.25 inH&#8322;O</h3>
+      <table id="labTable"><thead><tr><th>RPM</th><th>Watts</th><th>CFM</th><th>CFM/W</th></tr></thead><tbody></tbody></table>
+    </div>
+    <div class="card">
+      <h3>House Setup — PS1</h3>
+      <table>
+        <tr><th>พัดลมติดตั้ง (ตัว)</th><th>พื้นที่</th></tr>
+        <tr>
+          <td><input type="number" id="ps1Fans" value="16"></td>
+          <td><input type="number" id="ps1Area" value="59.5" step="0.1" style="width:70px"> m² = <b><span id="areaFt2">—</span> ft²</b></td>
+        </tr>
+      </table>
+      <div style="margin-top:12px">
+        <table><tr><th>AC Watts/ตัว</th><th>AC CFM/ตัว</th></tr>
+        <tr><td><input type="number" id="acW" value="2137"></td><td><input type="number" id="acCFM" value="28900"></td></tr></table>
+      </div>
+      <div style="margin-top:12px">
+        <button class="btn" onclick="recalc()">คำนวณใหม่</button>
+        <button class="btn" onclick="downloadCharts()" style="background:#059669;margin-left:8px">บันทึกกราฟ</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== MODE CHECKBOXES ===== -->
+  <div class="section-title">เลือกรูปแบบเปรียบเทียบ (เลือกได้หลายอัน)</div>
+  <div class="check-group">
+    <label class="check-item" id="chkAC">
+      <input type="checkbox" id="cbAC" checked>
+      <div><div class="check-label" style="color:#d97706">AC</div><div class="check-desc">All AC — Baseline</div></div>
+    </label>
+    <label class="check-item" id="chkEC">
+      <input type="checkbox" id="cbEC" checked>
+      <div><div class="check-label" style="color:#059669">EC</div><div class="check-desc">All EC — Variable Speed</div></div>
+    </label>
+    <label class="check-item" id="chkMX">
+      <input type="checkbox" id="cbMX">
+      <div><div class="check-label" style="color:#7c3aed">Mixed</div><div class="check-desc">AC + EC ผสม</div></div>
+    </label>
+  </div>
+
+  <!-- Mixed config panel -->
+  <div id="mixedConfig" class="card" style="display:none">
+    <h3>Mixed Configuration</h3>
+    <div class="mix-row">
+      <div class="mix-item"><label>AC Fans:</label><input type="number" id="mixAC" value="8" min="0"></div>
+      <div class="mix-item"><label>EC Fans:</label><input type="number" id="mixEC" value="8" min="0"></div>
+      <div class="mix-item">รวม: <strong><span id="mixTotal">16</span></strong> / ติดตั้ง <span id="mixInstalled">16</span> ตัว</div>
+    </div>
+    <div id="mixWarn" class="mix-warn" style="display:none"></div>
+    <p style="font-size:12px;color:#666;margin:8px 0 0 0">EC เปิดก่อน (ประหยัดกว่า) → ถ้ายังไม่พอค่อยเปิด AC เพิ่ม</p>
+  </div>
+
+  <!-- ===== LIFECYCLE INPUT TABLE (shared) ===== -->
+  <div class="section-title">Lifecycle Profile — PS1</div>
+  <div class="card" style="overflow-x:auto">
+    <p style="font-size:12px;color:#666;margin:0 0 10px 0">แก้ไข <b>CFM</b> หรือ <b>จำนวนพัดลม</b> — อีกช่องคำนวณอัตโนมัติ (based on AC CFM)</p>
+    <table id="inputTable">
+      <thead>
+        <tr><th>#</th><th>Phase</th><th>สัปดาห์</th><th>วัน</th><th>ชม./วัน</th><th>CFM Target</th><th>พัดลม (AC)</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <!-- ===== SEPARATED MODE TABLES ===== -->
+  <div id="acSection" class="mode-section border-ac" style="display:none">
+    <h3 style="color:#d97706">⬛ All AC — Baseline</h3>
+    <table id="acTable"><thead></thead><tbody></tbody></table>
+    <div class="summary-row" id="acSummary"></div>
+  </div>
+
+  <div id="ecSection" class="mode-section border-ec" style="display:none">
+    <h3 style="color:#059669">⬛ All EC — Variable Speed</h3>
+    <table id="ecTable"><thead></thead><tbody></tbody></table>
+    <div class="summary-row" id="ecSummary"></div>
+  </div>
+
+  <div id="mxSection" class="mode-section border-mx" style="display:none">
+    <h3 style="color:#7c3aed" id="mxTitle">⬛ Mixed AC + EC</h3>
+    <table id="mxTable"><thead></thead><tbody></tbody></table>
+    <div class="summary-row" id="mxSummary"></div>
+  </div>
+
+  <!-- ===== COMPARISON SUMMARY ===== -->
+  <div id="compSummary" style="display:none">
+    <div class="section-title">สรุปเปรียบเทียบ / รอบ (<span id="cycleDays">469</span> วัน)</div>
+    <div id="summaryCards" class="grid grid-3"></div>
+  </div>
+
+  <!-- ===== CHARTS ===== -->
+  <div id="chartSection" style="display:none">
+    <div class="section-title">กราฟเปรียบเทียบ</div>
+    <div class="grid grid-2">
+      <div class="chart-box"><canvas id="chart1"></canvas></div>
+      <div class="chart-box"><canvas id="chart2"></canvas></div>
+    </div>
+    <div style="margin-top:16px" class="grid grid-2">
+      <div class="chart-box"><canvas id="chart3"></canvas></div>
+      <div class="chart-box"><canvas id="chart4"></canvas></div>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    AC: fixed speed 28,900 CFM / 2,137 W | EC: เลือก RPM ต่ำสุดที่ CFM/ตัว ≥ target |
+    EC fans needed = ceil(CFM ÷ 29,400) | Mixed: เปิด EC ก่อน แล้วเสริม AC |
+    V (ft/min) = CFM รวม ÷ ft²
+  </div>
+</div>
+
+<script>
+/* ====== CONSTANTS & DATA ====== */
+const M2_TO_FT2 = 10.7639;
+const COL = {ac:'#d97706', ec:'#059669', mx:'#7c3aed', sv:'#2563eb'};
+
+const labData = [
+  {rpm:720, w:1970, cfm:29400},
+  {rpm:685, w:1748, cfm:27300},
+  {rpm:600, w:1268, cfm:22100},
+  {rpm:550, w:1040, cfm:19000},
+  {rpm:500, w:794,  cfm:14400},
+  {rpm:450, w:529,  cfm:7300},
+  {rpm:0,   w:0,    cfm:0},
+];
+
+const phases = [
+  {n:1, name:'Brooding',        weeks:'1–3',   days:21,  cfm:23120,  hrs:4,  mode:'cfm'},
+  {n:2, name:'Starter',         weeks:'4–8',   days:35,  cfm:69360,  hrs:18, mode:'cfm'},
+  {n:3, name:'Grower',          weeks:'9–16',  days:56,  cfm:161840, hrs:24, mode:'cfm'},
+  {n:4, name:'Pre-lay',         weeks:'17–22', days:42,  cfm:277440, hrs:24, mode:'cfm'},
+  {n:5, name:'Peak production', weeks:'23–45', days:161, cfm:416160, hrs:24, mode:'cfm'},
+  {n:6, name:'Late production', weeks:'46–65', days:140, cfm:346800, hrs:24, mode:'cfm'},
+  {n:7, name:'พักโรง',           weeks:'66–67', days:14,  cfm:0,      hrs:0,  mode:'cfm'},
+];
+
+/* ====== UTILITIES ====== */
+const fmt = n => Math.round(n).toLocaleString();
+
+function renderLab(){
+  document.querySelector('#labTable tbody').innerHTML = labData.map(d =>
+    `<tr><td>${d.rpm}</td><td>${d.w.toLocaleString()}</td><td>${d.cfm.toLocaleString()}</td><td>${d.w>0?(d.cfm/d.w).toFixed(2):'—'}</td></tr>`
+  ).join('');
+}
+
+function findEC(cfmNeeded){
+  for(let i=0;i<labData.length;i++){
+    if(labData[i].cfm>=cfmNeeded){
+      if(i+1<labData.length && labData[i+1].cfm>=cfmNeeded) continue;
+      return labData[i];
+    }
+  }
+  return labData[0];
+}
+
+let charts = {};
+function destroyCharts(){ Object.values(charts).forEach(c=>c&&c.destroy()); charts={}; }
+
+/* ====== CHECKBOX STATE ====== */
+function getChecked(){
+  return {
+    ac: document.getElementById('cbAC').checked,
+    ec: document.getElementById('cbEC').checked,
+    mx: document.getElementById('cbMX').checked,
+  };
+}
+
+function updateCheckStyles(){
+  const s = getChecked();
+  document.getElementById('chkAC').className = 'check-item' + (s.ac?' active-ac':'');
+  document.getElementById('chkEC').className = 'check-item' + (s.ec?' active-ec':'');
+  document.getElementById('chkMX').className = 'check-item' + (s.mx?' active-mx':'');
+  document.getElementById('mixedConfig').style.display = s.mx ? 'block' : 'none';
+}
+
+/* ====== RENDER INPUT TABLE ====== */
+function renderInputTable(acCFM, maxFans){
+  const tbody = document.querySelector('#inputTable tbody');
+  tbody.innerHTML = phases.map((p,i) => {
+    const warn = p.fans>maxFans ? 'style="color:#dc2626;font-weight:700"' : '';
+    const sA = 'background:#fff;font-weight:600;border-left:3px solid #2563eb';
+    const sC = 'background:#f0f4f8;color:#999';
+    return `<tr>
+      <td>${p.n}</td><td style="text-align:left">${p.name}</td><td>${p.weeks}</td>
+      <td><input type="number" data-i="${i}" data-f="days" value="${p.days}" style="width:45px"></td>
+      <td><input type="number" data-i="${i}" data-f="hrs" value="${p.hrs}" style="width:42px"></td>
+      <td><input type="number" data-i="${i}" data-f="cfm" value="${p.cfm}" style="width:100px;${p.mode==='cfm'?sA:sC}"></td>
+      <td><input type="number" data-i="${i}" data-f="fans" value="${p.fans}" style="width:50px;${p.mode==='fans'?sA:sC}" ${warn} min="0"></td>
+    </tr>`;
+  }).join('');
+}
+
+/* ====== CORE RECALC ====== */
+function recalc(){
+  const acW      = +document.getElementById('acW').value;
+  const acCFM    = +document.getElementById('acCFM').value;
+  const ecMaxCFM = labData[0].cfm;
+  const maxFans  = +document.getElementById('ps1Fans').value;
+  const areaM2   = +document.getElementById('ps1Area').value;
+  const areaFt2  = areaM2 * M2_TO_FT2;
+  document.getElementById('areaFt2').textContent = areaFt2.toFixed(1);
+
+  phases.forEach(p => {
+    if(p.mode==='fans') p.cfm = (p.fans||0)*acCFM;
+    else p.fans = p.cfm>0 ? Math.ceil(p.cfm/acCFM) : 0;
+  });
+
+  renderInputTable(acCFM, maxFans);
+
+  const P = {acW, acCFM, ecMaxCFM, maxFans, areaFt2};
+  const checked = getChecked();
+  const anyChecked = checked.ac || checked.ec || checked.mx;
+
+  // Compute all mode data
+  const acData = computeAC(P);
+  const ecData = computeEC(P);
+  const mxData = computeMixed(P);
+
+  // Show/hide sections
+  document.getElementById('acSection').style.display = checked.ac ? 'block' : 'none';
+  document.getElementById('ecSection').style.display = checked.ec ? 'block' : 'none';
+  document.getElementById('mxSection').style.display = checked.mx ? 'block' : 'none';
+  document.getElementById('compSummary').style.display = anyChecked ? 'block' : 'none';
+  document.getElementById('chartSection').style.display = anyChecked ? 'block' : 'none';
+
+  if(checked.ac) renderACTable(acData, P);
+  if(checked.ec) renderECTable(ecData, P);
+  if(checked.mx) renderMXTable(mxData, P);
+
+  renderSummary(acData, ecData, mxData, checked);
+  renderCharts(acData, ecData, mxData, checked);
+}
+
+/* ====== COMPUTE FUNCTIONS ====== */
+function computeAC(P){
+  let total=0;
+  const rows = phases.map(p => {
+    const off = p.fans===0;
+    const cfmT = p.fans * P.acCFM;
+    const vel = off ? 0 : cfmT / P.areaFt2;
+    const kWh = p.fans * P.acW * p.hrs * p.days / 1000;
+    total += kWh;
+    return {fans:p.fans, cfmT, vel, kWh, off};
+  });
+  return {rows, total};
+}
+
+function computeEC(P){
+  let total=0;
+  const rows = phases.map(p => {
+    const off = p.cfm===0;
+    if(off) return {fans:0, rpm:0, w:0, cfmT:0, vel:0, kWh:0, off:true};
+    const fans = Math.ceil(p.cfm / P.ecMaxCFM);
+    const cfmPer = p.cfm / fans;
+    const ec = findEC(cfmPer);
+    const cfmT = fans * ec.cfm;
+    const vel = cfmT / P.areaFt2;
+    const kWh = fans * ec.w * p.hrs * p.days / 1000;
+    total += kWh;
+    return {fans, rpm:ec.rpm, w:ec.w, cfmT, vel, kWh, off:false};
+  });
+  return {rows, total};
+}
+
+function computeMixed(P){
+  const nAC = +document.getElementById('mixAC').value;
+  const nEC = +document.getElementById('mixEC').value;
+  const nTotal = nAC + nEC;
+  document.getElementById('mixTotal').textContent = nTotal;
+  document.getElementById('mixInstalled').textContent = P.maxFans;
+  const warnEl = document.getElementById('mixWarn');
+  if(nTotal > P.maxFans){ warnEl.style.display='block'; warnEl.textContent=`รวม ${nTotal} ตัว เกินจำนวนติดตั้ง ${P.maxFans} ตัว`; }
+  else if(nTotal < P.maxFans){ warnEl.style.display='block'; warnEl.textContent=`รวม ${nTotal} ตัว น้อยกว่าติดตั้ง ${P.maxFans} ตัว`; }
+  else { warnEl.style.display='none'; }
+
+  let total=0;
+  const rows = phases.map(p => {
+    const off = p.fans===0;
+    const fansNeeded = p.fans;
+    const ecOn = Math.min(fansNeeded, nEC);
+    const acOn = Math.min(fansNeeded - ecOn, nAC);
+
+    let ecRpm=0, ecWFan=0, ecCfmT=0, acCfmT=acOn*P.acCFM;
+    if(ecOn>0 && !off){
+      const ecCfmNeeded = Math.max(0, p.cfm - acCfmT);
+      const ecPer = ecCfmNeeded / ecOn;
+      const ec = findEC(ecPer);
+      ecRpm=ec.rpm; ecWFan=ec.w; ecCfmT=ecOn*ec.cfm;
+    }
+    const cfmT = acCfmT + ecCfmT;
+    const vel = off ? 0 : cfmT / P.areaFt2;
+    const kWh = (acOn*P.acW + ecOn*ecWFan) * p.hrs * p.days / 1000;
+    total += kWh;
+    return {acOn, ecOn, ecRpm, ecWFan, cfmT, vel, kWh, off};
+  });
+  return {rows, total, nAC, nEC};
+}
+
+/* ====== RENDER TABLES ====== */
+function renderACTable(data, P){
+  document.querySelector('#acTable thead').innerHTML = `<tr>
+    <th>#</th><th>Phase</th><th>ตัวเปิด</th><th>CFM รวม</th><th>V (ft/min)</th><th>W/ตัว</th><th>kWh</th></tr>`;
+  const tbody = document.querySelector('#acTable tbody');
+  tbody.innerHTML = data.rows.map((r,i) => {
+    const p = phases[i]; const d = v => r.off?'—':v;
+    return `<tr><td>${p.n}</td><td style="text-align:left">${p.name}</td>
+      <td>${d(r.fans)}</td><td>${d(fmt(r.cfmT))}</td><td>${d(Math.round(r.vel))}</td>
+      <td>${d(P.acW.toLocaleString())}</td>
+      <td>${r.kWh>0?'<span class="tag ac">'+fmt(r.kWh)+'</span>':'—'}</td></tr>`;
+  }).join('') + `<tr class="row-total"><td colspan="6" style="text-align:right">รวม</td>
+    <td><span class="tag ac">${fmt(data.total)}</span></td></tr>`;
+  document.getElementById('acSummary').innerHTML = summaryItem('kWh/รอบ',fmt(data.total),'#d97706') +
+    summaryItem('kWh/ปี',fmt(data.total*365/totalDays()),'#d97706');
+}
+
+function renderECTable(data, P){
+  document.querySelector('#ecTable thead').innerHTML = `<tr>
+    <th>#</th><th>Phase</th><th>ตัวเปิด</th><th>RPM</th><th>W/ตัว</th><th>CFM รวม</th><th>V (ft/min)</th><th>kWh</th></tr>`;
+  const tbody = document.querySelector('#ecTable tbody');
+  tbody.innerHTML = data.rows.map((r,i) => {
+    const p = phases[i]; const d = v => r.off?'—':v;
+    return `<tr><td>${p.n}</td><td style="text-align:left">${p.name}</td>
+      <td>${d(r.fans)}</td><td>${d(r.rpm)}</td><td>${r.w>0?r.w.toLocaleString():'—'}</td>
+      <td>${d(fmt(r.cfmT))}</td><td>${d(Math.round(r.vel))}</td>
+      <td>${r.kWh>0?'<span class="tag ec">'+fmt(r.kWh)+'</span>':'—'}</td></tr>`;
+  }).join('') + `<tr class="row-total"><td colspan="7" style="text-align:right">รวม</td>
+    <td><span class="tag ec">${fmt(data.total)}</span></td></tr>`;
+  document.getElementById('ecSummary').innerHTML = summaryItem('kWh/รอบ',fmt(data.total),'#059669') +
+    summaryItem('kWh/ปี',fmt(data.total*365/totalDays()),'#059669');
+}
+
+function renderMXTable(data, P){
+  document.getElementById('mxTitle').textContent = `⬛ Mixed (${data.nAC} AC + ${data.nEC} EC)`;
+  document.querySelector('#mxTable thead').innerHTML = `<tr>
+    <th>#</th><th>Phase</th><th>AC เปิด</th><th>EC เปิด</th><th>EC RPM</th><th>EC W/ตัว</th><th>CFM รวม</th><th>V (ft/min)</th><th>kWh</th></tr>`;
+  const tbody = document.querySelector('#mxTable tbody');
+  tbody.innerHTML = data.rows.map((r,i) => {
+    const p = phases[i]; const d = v => r.off?'—':v;
+    return `<tr><td>${p.n}</td><td style="text-align:left">${p.name}</td>
+      <td>${d(r.acOn)}</td><td>${d(r.ecOn)}</td><td>${d(r.ecRpm)}</td>
+      <td>${r.ecWFan>0?r.ecWFan.toLocaleString():'—'}</td>
+      <td>${d(fmt(r.cfmT))}</td><td>${d(Math.round(r.vel))}</td>
+      <td>${r.kWh>0?'<span class="tag mx">'+fmt(r.kWh)+'</span>':'—'}</td></tr>`;
+  }).join('') + `<tr class="row-total"><td colspan="8" style="text-align:right">รวม</td>
+    <td><span class="tag mx">${fmt(data.total)}</span></td></tr>`;
+  document.getElementById('mxSummary').innerHTML = summaryItem('kWh/รอบ',fmt(data.total),'#7c3aed') +
+    summaryItem('kWh/ปี',fmt(data.total*365/totalDays()),'#7c3aed');
+}
+
+function summaryItem(label, val, color){
+  return `<div class="summary-item"><div class="s-label">${label}</div><div class="s-val" style="color:${color}">${val}</div></div>`;
+}
+function totalDays(){ return phases.reduce((s,p)=>s+p.days,0); }
+
+/* ====== COMPARISON SUMMARY ====== */
+function renderSummary(acData, ecData, mxData, checked){
+  const days = totalDays();
+  document.getElementById('cycleDays').textContent = days;
+  let html = '';
+  if(checked.ac){
+    html += `<div class="card"><h3>All AC</h3><div class="metric ac">${fmt(acData.total)}</div><div class="metric-sub">${fmt(acData.total*365/days)} kWh/ปี</div></div>`;
+  }
+  if(checked.ec){
+    const sv = acData.total - ecData.total;
+    const pct = acData.total>0 ? ((sv/acData.total)*100).toFixed(1) : '0';
+    html += `<div class="card"><h3>All EC</h3><div class="metric ec">${fmt(ecData.total)}</div><div class="metric-sub">${fmt(ecData.total*365/days)} kWh/ปี${checked.ac?' | ประหยัด '+pct+'% vs AC':''}</div></div>`;
+  }
+  if(checked.mx){
+    const sv = acData.total - mxData.total;
+    const pct = acData.total>0 ? ((sv/acData.total)*100).toFixed(1) : '0';
+    html += `<div class="card"><h3>Mixed (${mxData.nAC}AC+${mxData.nEC}EC)</h3><div class="metric mx">${fmt(mxData.total)}</div><div class="metric-sub">${fmt(mxData.total*365/days)} kWh/ปี${checked.ac?' | ประหยัด '+pct+'% vs AC':''}</div></div>`;
+  }
+  if(checked.ac && (checked.ec || checked.mx)){
+    const best = checked.ec && checked.mx ? Math.min(ecData.total, mxData.total) : (checked.ec ? ecData.total : mxData.total);
+    const sv = acData.total - best;
+    html += `<div class="card"><h3>ประหยัดสูงสุด vs AC</h3><div class="metric save">${fmt(sv)} kWh</div><div class="metric-sub">${(sv/acData.total*100).toFixed(1)}% | ${fmt(sv*365/days)} kWh/ปี</div></div>`;
+  }
+  document.getElementById('summaryCards').innerHTML = html;
+}
+
+/* ====== CHARTS ====== */
+function renderCharts(acData, ecData, mxData, checked){
+  destroyCharts();
+  const labels = phases.map(p=>p.name);
+  const anyData = checked.ac || checked.ec || checked.mx;
+  if(!anyData) return;
+
+  // Chart 1: kWh per Phase (bar)
+  const ds1 = [];
+  if(checked.ac) ds1.push({label:'AC kWh',data:acData.rows.map(r=>r.kWh),backgroundColor:COL.ac});
+  if(checked.ec) ds1.push({label:'EC kWh',data:ecData.rows.map(r=>r.kWh),backgroundColor:COL.ec});
+  if(checked.mx) ds1.push({label:'Mixed kWh',data:mxData.rows.map(r=>r.kWh),backgroundColor:COL.mx});
+  charts.c1 = new Chart(document.getElementById('chart1'),{type:'bar',
+    data:{labels,datasets:ds1},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{title:{display:true,text:'kWh ต่อ Phase'}},scales:{y:{title:{display:true,text:'kWh'}}}}});
+
+  // Chart 2: Velocity per Phase (bar)
+  const ds2 = [];
+  if(checked.ac) ds2.push({label:'AC V (ft/min)',data:acData.rows.map(r=>Math.round(r.vel)),backgroundColor:COL.ac});
+  if(checked.ec) ds2.push({label:'EC V (ft/min)',data:ecData.rows.map(r=>Math.round(r.vel)),backgroundColor:COL.ec});
+  if(checked.mx) ds2.push({label:'Mixed V (ft/min)',data:mxData.rows.map(r=>Math.round(r.vel)),backgroundColor:COL.mx});
+  charts.c2 = new Chart(document.getElementById('chart2'),{type:'bar',
+    data:{labels,datasets:ds2},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{title:{display:true,text:'Velocity (ft/min) ต่อ Phase'}},scales:{y:{title:{display:true,text:'ft/min'}}}}});
+
+  // Chart 3: Cumulative kWh (line)
+  const ds3 = [];
+  if(checked.ac){ let c=0; ds3.push({label:'AC สะสม',data:acData.rows.map(r=>(c+=r.kWh,c)),borderColor:COL.ac,backgroundColor:COL.ac+'33',fill:true,tension:.3}); }
+  if(checked.ec){ let c=0; ds3.push({label:'EC สะสม',data:ecData.rows.map(r=>(c+=r.kWh,c)),borderColor:COL.ec,backgroundColor:COL.ec+'33',fill:true,tension:.3}); }
+  if(checked.mx){ let c=0; ds3.push({label:'Mixed สะสม',data:mxData.rows.map(r=>(c+=r.kWh,c)),borderColor:COL.mx,backgroundColor:COL.mx+'33',fill:true,tension:.3}); }
+  charts.c3 = new Chart(document.getElementById('chart3'),{type:'line',
+    data:{labels,datasets:ds3},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{title:{display:true,text:'kWh สะสม'}}}});
+
+  // Chart 4: Total comparison (doughnut/bar)
+  const ds4labels=[], ds4data=[], ds4colors=[];
+  if(checked.ac){ ds4labels.push('All AC'); ds4data.push(acData.total); ds4colors.push(COL.ac); }
+  if(checked.ec){ ds4labels.push('All EC'); ds4data.push(ecData.total); ds4colors.push(COL.ec); }
+  if(checked.mx){ ds4labels.push('Mixed');  ds4data.push(mxData.total); ds4colors.push(COL.mx); }
+  charts.c4 = new Chart(document.getElementById('chart4'),{type:'bar',
+    data:{labels:ds4labels,datasets:[{label:'kWh รวม/รอบ',data:ds4data,backgroundColor:ds4colors}]},
+    options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{title:{display:true,text:'kWh รวมต่อรอบ — เปรียบเทียบ'}},scales:{x:{title:{display:true,text:'kWh'}}}}});
+}
+
+/* ====== DOWNLOAD ====== */
+function downloadCharts(){
+  ['chart1','chart2','chart3','chart4'].forEach((id,i) => {
+    const c=document.getElementById(id); if(!c) return;
+    const a=document.createElement('a');
+    a.download=`ps1_compare_chart${i+1}.png`;
+    a.href=c.toDataURL('image/png'); a.click();
+  });
+}
+
+/* ====== EVENT HANDLERS ====== */
+document.querySelector('#inputTable').addEventListener('change', e => {
+  const el=e.target;
+  if(!el.dataset||!el.dataset.i) return;
+  const idx=+el.dataset.i, f=el.dataset.f, v=+el.value;
+  const acCFM=+document.getElementById('acCFM').value;
+  if(f==='cfm')      { phases[idx].cfm=v;  phases[idx].mode='cfm'; }
+  else if(f==='fans'){ phases[idx].fans=v;  phases[idx].mode='fans'; phases[idx].cfm=v*acCFM; }
+  else               { phases[idx][f]=v; }
+  recalc();
+});
+
+['acW','acCFM','ps1Fans','ps1Area'].forEach(id =>
+  document.getElementById(id).addEventListener('change', recalc));
+['mixAC','mixEC'].forEach(id =>
+  document.getElementById(id).addEventListener('change', recalc));
+['cbAC','cbEC','cbMX'].forEach(id =>
+  document.getElementById(id).addEventListener('change', ()=>{ updateCheckStyles(); recalc(); }));
+
+renderLab();
+updateCheckStyles();
+recalc();
+</script>
+</body>
+</html>
